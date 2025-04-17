@@ -1,84 +1,11 @@
-# Getting Started with Create React App
-
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
-
-## Available Scripts
-
-In the project directory, you can run:
-
-### `npm start`
-
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
-
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
-
-#### `j```
-
 "use client";
 import React from "react";
 import { mens_kurta } from "../../../Data/mens_kurta";
 import { useState } from "react";
 import {
-color,
-filters,
-singleFilter,
+  color,
+  filters,
+  singleFilter,
 } from "../../components/Product/FilterData";
 
 import Radio from "@mui/material/Radio";
@@ -90,75 +17,87 @@ import FormLabel from "@mui/material/FormLabel";
 // import FilterListIcon from "@material-ui/icons/FilterList";
 
 import {
-Dialog,
-DialogBackdrop,
-DialogPanel,
-Disclosure,
-DisclosureButton,
-DisclosurePanel,
-Menu,
-MenuButton,
-MenuItem,
-MenuItems,
+  Dialog,
+  DialogBackdrop,
+  DialogPanel,
+  Disclosure,
+  DisclosureButton,
+  DisclosurePanel,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuItems,
 } from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import {
-ChevronDownIcon,
-FunnelIcon,
-MinusIcon,
-PlusIcon,
-Squares2X2Icon,
+  ChevronDownIcon,
+  FunnelIcon,
+  MinusIcon,
+  PlusIcon,
+  Squares2X2Icon,
 } from "@heroicons/react/20/solid";
 import ProductCard from "./ProductCard";
 import { FilterList } from "@mui/icons-material";
-import { navigate, useLocation, useNavigate } from "react-router-dom";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
 
 const sortOptions = [
-{ name: "Price: Low to High", href: "#", current: false },
-{ name: "Price: High to Low", href: "#", current: false },
+  { name: "Price: Low to High", href: "#", current: false },
+  { name: "Price: High to Low", href: "#", current: false },
 ];
 
 function classNames(...classes) {
-return classes.filter(Boolean).join(" ");
+  return classes.filter(Boolean).join(" ");
 }
 
 export default function Product() {
-const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
-const location = useLocation();
-const navigate = useNavigate();
+  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
+  const location = useLocation();
+  const Navigate = useNavigate();
+  const handleFilter = (value, sectionId) => {
+    const searchParams = new URLSearchParams(location.search);
 
-const handleFilter = (sectionId, value) => {
-const searchParams = new URLSearchParams(location.search);
-let filterValue = searchParams.getAll(sectionId);
-if (filterValue.length > 0 && filterValue[0].split(",").includes(value)) {
-filterValue = filterValue[0].split(",").filter((item) => item != value);
+    // Get current filter values for the section
+    let filterValues = searchParams.get(sectionId)?.split(",") || [];
 
-      if (filterValue.length === 0) {
-        searchParams.delete(sectionId);
-      } else {
-        filterValue.push(value);
-      }
-
-      if (filterValue.length > 0) {
-        searchParams.set(sectionId, filterValue.join(","));
-        const query = searchParams.toString();
-        navigate({ search: `? ${query}` });
-      }
+    // Toggle the selected filter value
+    if (filterValues.includes(value)) {
+      // If the value is already selected, remove it
+      filterValues = filterValues.filter((item) => item !== value);
+    } else {
+      // Otherwise, add the new value
+      filterValues.push(value);
     }
 
-};
+    // Update or delete the query parameter
+    if (filterValues.length > 0) {
+      searchParams.set(sectionId, filterValues.join(","));
+    } else {
+      searchParams.delete(sectionId);
+    }
 
-return (
+    // Navigate to the updated URL
+    Navigate(`?${searchParams.toString()}`);
+  };
+  const handleRadioFilterChange = (e, sectionId) => {
+    const searchParams = new URLSearchParams(location.search);
 
-<div className="bg-white">
-<div>
-{/_ Mobile filter dialog _/}
-<Dialog
+    searchParams.set(sectionId, e.target.value);
+
+    const query = searchParams.toString();
+
+    Navigate(`?${searchParams.toString()}`);
+  };
+
+  return (
+    <div className="bg-white">
+      <div>
+        {/* Mobile filter dialog */}
+        <Dialog
           open={mobileFiltersOpen}
           onClose={setMobileFiltersOpen}
           className="relative z-40 lg:hidden"
         >
-<DialogBackdrop
+          <DialogBackdrop
             transition
             className="fixed inset-0 bg-black/25 transition-opacity duration-300 ease-linear data-[closed]:opacity-0"
           />
@@ -213,6 +152,9 @@ return (
                             <div className="flex h-5 shrink-0 items-center">
                               <div className="group grid size-4 grid-cols-1">
                                 <input
+                                  onChange={() =>
+                                    handleFilter(option.value, section.id)
+                                  }
                                   defaultValue={option.value}
                                   id={`filter-mobile-${section.id}-${optionIdx}`}
                                   name={`${section.id}[]`}
@@ -358,18 +300,44 @@ return (
                         <div className="space-y-4">
                           {section.options.map((option, optionIdx) => (
                             <div key={option.value} className="flex gap-3">
-                              <input
-                                onChange={() =>
-                                  handleFilter(option.value, section.id)
-                                }
-                                defaultValue={option.value}
-                                defaultChecked={option.checked}
-                                id={`filter-${section.id}-${optionIdx}`}
-                                name={`${section.id}[]`}
-                                type="checkbox"
-                                className=" h-4 w-4 rounded border-gray-300 text-indigo-600"
-                              />
+                              <div className="flex h-5 shrink-0 items-center">
+                                <div className="group grid size-4 grid-cols-1">
+                                  <input
+                                    type="checkbox"
+                                    id={`filter-${section.id}-${optionIdx}`}
+                                    name={`${section.id}[]`}
+                                    value={option.value}
+                                    onChange={() =>
+                                      handleFilter(option.value, section.id)
+                                    }
+                                    defaultChecked={location.search.includes(
+                                      `${section.id}=${option.value}`
+                                    )}
+                                    className="col-start-1 row-start-1 appearance-none rounded border border-gray-300 bg-white checked:border-indigo-600 checked:bg-indigo-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                                  />
 
+                                  <svg
+                                    fill="none"
+                                    viewBox="0 0 14 14"
+                                    className="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white group-has-[:disabled]:stroke-gray-950/25"
+                                  >
+                                    <path
+                                      d="M3 8L6 11L11 3.5"
+                                      strokeWidth={2}
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      className="opacity-0 group-has-[:checked]:opacity-100"
+                                    />
+                                    <path
+                                      d="M3 7H11"
+                                      strokeWidth={2}
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      className="opacity-0 group-has-[:indeterminate]:opacity-100"
+                                    />
+                                  </svg>
+                                </div>
+                              </div>
                               <label
                                 htmlFor={`filter-${section.id}-${optionIdx}`}
                                 className="text-sm text-gray-600"
@@ -416,13 +384,16 @@ return (
                         <div className="space-y-4">
                           <FormControl>
                             <RadioGroup
-                              aria-labelledby="demo-radio-buttons-group-label"
+                              aria-labelLedBy="demo-radio-buttons-group-label"
                               defaultValue="female"
                               name="radio-buttons-group"
                             >
                               {section.options.map((option, optionIdx) => (
                                 <div key={option.id || optionIdx}>
                                   <FormControlLabel
+                                    onChange={(e) =>
+                                      handleRadioFilterChange(e, section.id)
+                                    }
                                     value={option.value}
                                     control={<Radio />}
                                     label={option.label}
@@ -450,8 +421,5 @@ return (
         </main>
       </div>
     </div>
-
-);
+  );
 }
-
-####
